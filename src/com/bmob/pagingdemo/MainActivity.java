@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		Bmob.initialize(this, "");
-		showToast("Çë¼ÇµÃ½«ÄãµÄAppIdÌîĞ´ÔÚMainActivityµÄBmobSDK³õÊ¼»¯·½·¨ÖĞ");
+		showToast("è¯·è®°å¾—å°†ä½ çš„AppIdå¡«å†™åœ¨MainActivityçš„BmobSDKåˆå§‹åŒ–æ–¹æ³•ä¸­");
 		
 		initListView();
 		findViewById(R.id.btn_insertTestData).setOnClickListener(new View.OnClickListener() {
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
 	private void createTestData(){
 		for (int i = 0; i < 20; i++) {
 			TestData td = new TestData();
-			td.setName("²âÊÔÊı¾İ  "+i);
+			td.setName("æµ‹è¯•æ•°æ®  "+i);
 			td.save(this);
 		}
 	}
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
 				.setRefreshingLabel(getString(R.string.pull_to_refresh_bottom_refreshing));
 		loadingLayout
 				.setReleaseLabel(getString(R.string.pull_to_refresh_bottom_release));
-		// //»¬¶¯¼àÌı
+		// //æ»‘åŠ¨ç›‘å¬
 		mPullToRefreshView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
@@ -126,83 +126,102 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		// ÏÂÀ­Ë¢ĞÂ¼àÌı
+		// ä¸‹æ‹‰åˆ·æ–°ç›‘å¬
 		mPullToRefreshView
 				.setOnRefreshListener(new OnRefreshListener2<ListView>() {
 
 					@Override
 					public void onPullDownToRefresh(
 							PullToRefreshBase<ListView> refreshView) {
-						// ÏÂÀ­Ë¢ĞÂ(´ÓµÚÒ»Ò³¿ªÊ¼×°ÔØÊı¾İ)
+						// ä¸‹æ‹‰åˆ·æ–°(ä»ç¬¬ä¸€é¡µå¼€å§‹è£…è½½æ•°æ®)
 						queryData(0, STATE_REFRESH);
 					}
 
 					@Override
 					public void onPullUpToRefresh(
 							PullToRefreshBase<ListView> refreshView) {
-						// ÉÏÀ­¼ÓÔØ¸ü¶à(¼ÓÔØÏÂÒ»Ò³Êı¾İ)
+						// ä¸Šæ‹‰åŠ è½½æ›´å¤š(åŠ è½½ä¸‹ä¸€é¡µæ•°æ®)
 						queryData(curPage, STATE_MORE);
 					}
 				});
 
 		mMsgListView = mPullToRefreshView.getRefreshableView();
-		// ÔÙÉèÖÃadapter
+		// å†è®¾ç½®adapter
 		mMsgListView.setAdapter(new DeviceListAdapter(this));
 	}
 	
-	private static final int STATE_REFRESH = 0;// ÏÂÀ­Ë¢ĞÂ
-	private static final int STATE_MORE = 1;// ¼ÓÔØ¸ü¶à
+	private static final int STATE_REFRESH = 0;// ä¸‹æ‹‰åˆ·æ–°
+	private static final int STATE_MORE = 1;// åŠ è½½æ›´å¤š
 	
-	private int limit = 10;		// Ã¿Ò³µÄÊı¾İÊÇ10Ìõ
-	private int curPage = 0;		// µ±Ç°Ò³µÄ±àºÅ£¬´Ó0¿ªÊ¼
+	private int limit = 10;		// æ¯é¡µçš„æ•°æ®æ˜¯10æ¡
+	private int curPage = 0;		// å½“å‰é¡µçš„ç¼–å·ï¼Œä»0å¼€å§‹
 	
 	/**
-	 * ·ÖÒ³»ñÈ¡Êı¾İ
-	 * @param page	Ò³Âë
-	 * @param actionType	ListViewµÄ²Ù×÷ÀàĞÍ£¨ÏÂÀ­Ë¢ĞÂ¡¢ÉÏÀ­¼ÓÔØ¸ü¶à£©
+	 * åˆ†é¡µè·å–æ•°æ®
+	 * @param page	é¡µç 
+	 * @param actionType	ListViewçš„æ“ä½œç±»å‹ï¼ˆä¸‹æ‹‰åˆ·æ–°ã€ä¸Šæ‹‰åŠ è½½æ›´å¤šï¼‰
 	 */
 	private void queryData(final int page, final int actionType){
 		Log.i("bmob", "pageN:"+page+" limit:"+limit+" actionType:"+actionType);
 		
-		BmobQuery<TestData> query = new BmobQuery<TestData>();
-		query.setLimit(limit);			// ÉèÖÃÃ¿Ò³¶àÉÙÌõÊı¾İ
-		query.setSkip(page*limit);		// ´ÓµÚ¼¸ÌõÊı¾İ¿ªÊ¼£¬
-		query.findObjects(this, new FindListener<TestData>() {
-			
-			@Override
-			public void onSuccess(List<TestData> arg0) {
-				// TODO Auto-generated method stub
-				
-				if(arg0.size()>0){
+		BmobQuery<TestData> query = new BmobQuery<>();
+		// æŒ‰æ—¶é—´é™åºæŸ¥è¯¢
+		query.order("-createdAt");
+		// å¦‚æœæ˜¯åŠ è½½æ›´å¤š
+		if(actionType == STATE_MORE){
+    			// å¤„ç†æ—¶é—´æŸ¥è¯¢
+    			Date date = null;
+    			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    			try {
+            			date = sdf.parse(lastTime);
+    			} catch (ParseException e) {
+            			e.printStackTrace();
+    			}
+    			// åªæŸ¥è¯¢å°äºç­‰äºæœ€åä¸€ä¸ªitemå‘è¡¨æ—¶é—´çš„æ•°æ®
+    			query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(date));
+    			// è·³è¿‡ä¹‹å‰é¡µæ•°å¹¶å»æ‰é‡å¤æ•°æ®
+    			query.setSkip(page * count+1);
+		}else{
+    			page=0;
+    			query.setSkip(page);
+		}
+		// è®¾ç½®æ¯é¡µæ•°æ®ä¸ªæ•°
+		query.setLimit(count);
+		// æŸ¥æ‰¾æ•°æ®
+		query.findObjects(MainActivity.this, new FindListener<TestData>() {
+                    	@Override
+                    	public void onSuccess(List<TestData> list) {
+                        	if(list.size()>0){
 					if(actionType == STATE_REFRESH){
-						// µ±ÊÇÏÂÀ­Ë¢ĞÂ²Ù×÷Ê±£¬½«µ±Ç°Ò³µÄ±àºÅÖØÖÃÎª0£¬²¢°ÑbankCardsÇå¿Õ£¬ÖØĞÂÌí¼Ó
+						// å½“æ˜¯ä¸‹æ‹‰åˆ·æ–°æ“ä½œæ—¶ï¼Œå°†å½“å‰é¡µçš„ç¼–å·é‡ç½®ä¸º0ï¼Œå¹¶æŠŠbankCardsæ¸…ç©ºï¼Œé‡æ–°æ·»åŠ 
 						curPage = 0;
 						bankCards.clear();
+						// è·å–æœ€åæ—¶é—´
+						lastTime = list.get(list.size()-1).getCreatedAt();
 					}
 					
-					// ½«±¾´Î²éÑ¯µÄÊı¾İÌí¼Óµ½bankCardsÖĞ
-					for (TestData td : arg0) {
+					// å°†æœ¬æ¬¡æŸ¥è¯¢çš„æ•°æ®æ·»åŠ åˆ°bankCardsä¸­
+					for (TestData td : list) {
 						bankCards.add(td);
 					}
 					
-					// ÕâÀïÔÚÃ¿´Î¼ÓÔØÍêÊı¾İºó£¬½«µ±Ç°Ò³Âë+1£¬ÕâÑùÔÚÉÏÀ­Ë¢ĞÂµÄonPullUpToRefresh·½·¨ÖĞ¾Í²»ĞèÒª²Ù×÷curPageÁË
+					// è¿™é‡Œåœ¨æ¯æ¬¡åŠ è½½å®Œæ•°æ®åï¼Œå°†å½“å‰é¡µç +1ï¼Œè¿™æ ·åœ¨ä¸Šæ‹‰åˆ·æ–°çš„onPullUpToRefreshæ–¹æ³•ä¸­å°±ä¸éœ€è¦æ“ä½œcurPageäº†
 					curPage++;
-					showToast("µÚ"+(page+1)+"Ò³Êı¾İ¼ÓÔØÍê³É");
+					showToast("ç¬¬"+(page+1)+"é¡µæ•°æ®åŠ è½½å®Œæˆ");
 				}else if(actionType == STATE_MORE){
-					showToast("Ã»ÓĞ¸ü¶àÊı¾İÁË");
+					showToast("æ²¡æœ‰æ›´å¤šæ•°æ®äº†");
 				}else if(actionType == STATE_REFRESH){
-					showToast("Ã»ÓĞÊı¾İ");
+					showToast("æ²¡æœ‰æ•°æ®");
 				}
 				mPullToRefreshView.onRefreshComplete();
-			}
-			
-			@Override
-			public void onError(int arg0, String arg1) {
-				// TODO Auto-generated method stub
-				showToast("²éÑ¯Ê§°Ü:"+arg1);
+                    	}
+                    
+                    	@Override
+                    	public void onError(int arg0, String arg1) {
+				showToast("æŸ¥è¯¢å¤±è´¥:"+arg1);
 				mPullToRefreshView.onRefreshComplete();
-			}
-		});
+                    	}
+ 		});
 	}
 	
 	
