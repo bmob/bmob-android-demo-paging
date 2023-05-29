@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="wchat_pulltorefresh">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/WChat_PullToRefresh/bin/wchat_pulltorefresh.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
